@@ -1,25 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
+import React, { useState } from 'react';
+import { Layout } from './components/Layout';
+import { Routes, Route } from 'react-router-dom';
+import Shelves from './components/Shelves/Shelves';
+import { Navbar } from 'react-bootstrap';
 
+const SelectedShelfContext = React.createContext();
 function App() {
+ 
+  const [shelfOpen, setShelfOpen ] = useState("");
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+       <SelectedShelfContext.Provider value={[shelfOpen, setShelfOpen]}>
+          <Routes>
+              <Route path="/" element={<Layout/>}>
+                <Route path={`/${shelfOpen}`} element={<Shelves shelf={shelfOpen}/>}></Route>
+              </Route>
+          </Routes>
+        </SelectedShelfContext.Provider>
     </div>
   );
 }
 
-export default App;
+export { App, SelectedShelfContext };

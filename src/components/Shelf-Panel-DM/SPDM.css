@@ -1,0 +1,21 @@
+.spdm-container {
+    background-color: rgb(205, 203, 200); 
+    min-width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    align-items: center;
+    border-top-left-radius:20px ;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); 
+    margin-left: 100px;
+
+}
+
+.btn{
+    border: none;
+}
+
+.btn:hover {
+    background-color: rgb(79, 77, 74);;
+}

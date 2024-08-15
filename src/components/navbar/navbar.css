@@ -1,0 +1,121 @@
+.navbar-container {
+    background-color: #3A5A40;
+    height: 75px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+}
+.left-navbar-container{
+    /* background-color: black; */
+    margin: 0;
+    padding: 0;
+
+}
+.icon-title-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    /*margin-top: 9px;*/
+    margin-right: 40px;
+    
+}
+.title-container{
+    color: whitesmoke;
+    font-style: italic;
+    font-weight: lighter;
+    font-size: 24px;
+    margin-left: 10px;
+
+}
+.nook {
+    margin-left: 30px;
+}
+.icon-container{
+    background-color: white;
+    width: 42px;
+    height: 43px;
+    border: 2px solid #29412E;
+    border-radius: 30px;
+    margin-left: 10px
+}
+
+.icon{
+    border: 1px transparent white;
+    border-radius: 30px;
+    height: fit-content;
+    width: fit-content;
+    display: block;
+    margin: auto auto;
+    margin-top: 3.5px;
+
+}
+.tree-icon{
+    border: 1px transparent white;
+    border-radius: 7px 7px 3.5px 3.5px;
+}
+
+.middle-navbar-container{
+    /* background-color: red; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    color: #c2c5aa;
+}
+.navbar-items{
+    padding: 8px 10px;
+}
+.navbar-items:hover{
+    background-color: #476b4f;
+    cursor: pointer;
+    color: rgba(245, 245, 245, 0.808);
+}
+.search-bar{
+    width: 290px;
+    height: 32px;
+    border: none;
+    border-radius: 2.5px;
+    background-color: #dad3d3;
+    padding-left: 4px;
+    size: 5px;
+
+}
+.search-bar:active{
+    border: none;
+    border-radius: 2.5px;
+    border-color: none;
+}
+
+/* .search-bar::placeholder {
+    margin-left: 20px;
+} */
+.search-btn{
+    margin-left: 5px;
+    width: 72px;
+    height: 32px;
+    border: none;
+    border-radius: 3px;
+    background-color: #dad3d3;
+
+}
+.search-btn:hover {
+    background-color: #c2bcbc;
+    cursor: pointer;
+
+}
+.right-navbar-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    margin-bottom: 10px;
+}
+.dots-menu {
+    color: #c2c5aa;
+}
+
+.dots-menu:hover{
+    color: #c2bcbc;
+    cursor: pointer;
+}
