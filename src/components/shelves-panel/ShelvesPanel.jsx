@@ -1,16 +1,20 @@
 import React, { useState, useEffect,  useContext } from "react";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../../api/axiosConfig';
 import  './ShelvesPanel.css';
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { SelectedShelfContext } from '../../App';
+import { ShelvesContext } from '../Layout';
 import SPDM from "../Shelf-Panel-DM/SPDM";
 
+const DropDownMenuContext = React.createContext();
 
 const ShelvesPanel = () =>{
-    const [shelves, setShelves] = useState([]);
+    const [shelves, setShelves] = useContext(ShelvesContext);
     const [shelfOpen, setShelfOpen ] = useContext(SelectedShelfContext);
     const [dropDownMenu, setDropDownMenu] = useState(false);
+    const [menuPosition, setMenuPosition] = useState("");
+    const navigate = useNavigate();
     
     const createNewShelf = async () => {
 
@@ -33,13 +37,12 @@ const ShelvesPanel = () =>{
             const response = await api.post("/api/v1/shelf",payload, 
                 {
                     headers: {
-                      'Content-Type': 'application/json',
-                      // other headers if needed
+                        'Content-Type': 'application/json',
+                        // other headers if needed
                     }
                 })
-            setShelves([...shelves, response.data.shelfName]);
-            
 
+            setShelves([...shelves, response.data.shelfName]);
         }
         catch(err){
             console.log(err);
@@ -71,8 +74,15 @@ const ShelvesPanel = () =>{
 
     },[]);
 
-    var panelDropDownMenu = () => {
+    var panelDropDownMenu = (shelf) => {
+        console.log(shelf,"shelf in drop down");
         setDropDownMenu(!dropDownMenu);
+        var shelfForMenu = document.getElementById(shelf);
+        const rect = shelfForMenu.getBoundingClientRect();
+        const yPosition = rect.top + window.scrollY;
+        setMenuPosition(yPosition);
+
+        
     }
     
     return (
@@ -80,14 +90,16 @@ const ShelvesPanel = () =>{
             <div className="shelves-panel-title">Shelves</div>
             <div className="shelves-container">
                 {shelves.map((shelf) => (
-                    <div className="shelf" key={shelf}>
-                        <Link className="shelf-link" to={`/${shelf}`}  onClick={() => getSelectedShelf(shelf)}>
+                    <div className="shelf" id={shelf} key={shelf} onClick={() => {getSelectedShelf(shelf); navigate(`/${shelf}`)}}>
+                        {/* <Link className="shelf-link" to={`/${shelf}`}> */}
                             {shelf}
-                        </Link>
-                        <HiOutlineDotsVertical className="shelf-dots-menu" onMouseOver={panelDropDownMenu} />
+                        {/* </Link> */}
+                        <HiOutlineDotsVertical className="shelf-dots-menu" onClick={() => panelDropDownMenu(shelf)} />
                     </div>
                 ))}
-                {dropDownMenu && <SPDM/>}
+                <DropDownMenuContext.Provider value={[dropDownMenu,setDropDownMenu]}>
+                    {dropDownMenu && <SPDM menuPosition={menuPosition}/>}
+                </DropDownMenuContext.Provider>
             </div>
             <div className="add-shelf" onClick={createNewShelf}>+</div>
             
@@ -95,4 +107,4 @@ const ShelvesPanel = () =>{
     )
 }
 
-export default ShelvesPanel;
+export { ShelvesPanel, DropDownMenuContext };

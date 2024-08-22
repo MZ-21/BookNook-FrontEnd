@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Layout } from './components/Layout';
 import { Routes, Route } from 'react-router-dom';
 import Shelves from './components/Shelves/Shelves';
-import { Navbar } from 'react-bootstrap';
+
 
 const SelectedShelfContext = React.createContext();
 function App() {
