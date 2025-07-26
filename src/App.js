@@ -1,26 +1,23 @@
-import './App.css';
-import React, { useState } from 'react';
-import { Layout } from './components/Layout';
-import { Routes, Route } from 'react-router-dom';
-import Shelves from './components/Shelves/Shelves';
+import "./App.css";
+import React, { useState } from "react";
+import Layout from "./components/Layout";
+import { Routes, Route } from "react-router-dom";
+import Shelves from "./components/Shelves/Shelves";
+import Navbar from "./components/navbar/Navbar";
+import { useGlobalContext } from "./context";
 
-
-const SelectedShelfContext = React.createContext();
 function App() {
- 
-  const [shelfOpen, setShelfOpen ] = useState("");
-
+  const { shelfOpen } = useGlobalContext();
   return (
     <div className="App">
-       <SelectedShelfContext.Provider value={[shelfOpen, setShelfOpen]}>
-          <Routes>
-              <Route path="/" element={<Layout/>}>
-                <Route path={`/${shelfOpen}`} element={<Shelves shelf={shelfOpen}/>}></Route>
-              </Route>
-          </Routes>
-        </SelectedShelfContext.Provider>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route Route path="/shelves/:shelfName" element={<Shelves />} />
+        </Route>
+      </Routes>
     </div>
   );
 }
 
-export { App, SelectedShelfContext };
+export { App };
