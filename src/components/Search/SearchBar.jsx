@@ -22,12 +22,12 @@ const SearchBar = () => {
     };
   }, []);
 
-  const addBookToShelf = async (book, shelfName) => {
+  const addBookToShelf = async (book, shelfId, shelfName) => {
     try {
       await api.post(
         "/api/v1/shelf/addBook",
         {
-          shelfName: shelfName,
+          id: shelfId,
           book: book,
         },
         {
@@ -66,12 +66,14 @@ const SearchBar = () => {
                   {shelves.length > 0 ? (
                     shelves.map((shelf) => (
                       <li
-                        key={shelf}
+                        key={shelf.id}
                         className="sb-result-item-menu-item"
-                        onClick={() => addBookToShelf(book, shelf)}
+                        onClick={() =>
+                          addBookToShelf(book, shelf.id, shelf.shelfName)
+                        }
                       >
                         <IoAdd />
-                        {shelf}
+                        {shelf.shelfName}
                       </li>
                     ))
                   ) : (
