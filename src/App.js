@@ -7,13 +7,12 @@ import Navbar from "./components/navbar/Navbar";
 import { useGlobalContext } from "./context";
 
 function App() {
-  const { shelfOpen } = useGlobalContext();
   return (
     <div className="App">
       <Navbar />
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route Route path="/shelves/:shelfName" element={<Shelves />} />
+          <Route Route path="/shelves/:shelfId" element={<Shelves />} />
         </Route>
       </Routes>
     </div>
