@@ -6,17 +6,23 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useGlobalContext } from "../../context";
 import SPDM from "../Shelf-Panel-DM/SPDM";
 
+
 const ShelvesPanel = () => {
   const {
     shelves,
     setShelves,
+    shelfOpen,
     setShelfOpen,
     dropDownMenu,
     setDropDownMenu,
     setLeftPanel,
   } = useGlobalContext();
   const [menuPosition, setMenuPosition] = useState("");
+  const [menuShelf, setMenuSehlf] = useState(null);
+  const [editingShelfId, setEditingShelfId] = useState(null);
+  const [editedName, setEditedName] = useState("");
   const navigate = useNavigate();
+
 
   const createNewShelf = async () => {
     try {
@@ -42,42 +48,67 @@ const ShelvesPanel = () => {
         },
       });
 
-      setShelves([...shelves, response.data.shelfName]);
+      setShelves([...shelves, response.data]);
     } catch (err) {
-      console.log(err);
+      console.log("[ShelvesPanel FILE]: error creating shelf", err);
     }
   };
-
   var getSelectedShelf = (shelf) => {
     setShelfOpen(shelf);
   };
 
-  var getInitialSelves = async () => {
+  var getInitialShelves = async () => {
     try {
-      const shelfNamesResponse = await api.get("/api/v1/shelf/shelfNames");
+      const shelvesResponse = await api.get("/api/v1/shelf/shelves");
 
-      setShelves([
-        ...shelves,
-        ...shelfNamesResponse.data.filter((item) => !shelves.includes(item)),
-      ]);
-
-      console.log(shelves);
+      setShelves(shelvesResponse.data);
     } catch (err) {
-      console.log(err);
+      console.log("[ShelvesPanel File]: Error fetching initial shelves:", err);
     }
   };
 
   useEffect(() => {
     setLeftPanel(true);
-    getInitialSelves();
-  }, []);
 
-  var panelDropDownMenu = (shelf) => {
-    setDropDownMenu(!dropDownMenu);
-    var shelfForMenu = document.getElementById(shelf);
-    const rect = shelfForMenu.getBoundingClientRect();
-    const yPosition = rect.top + window.scrollY;
-    setMenuPosition(yPosition);
+    if (!shelves || shelves.length === 0) {
+      getInitialShelves();
+    }
+
+  }, [shelves]);
+
+  var panelDropDownMenu = (e) => {
+    setDropDownMenu((prev) => !prev);
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMenuPosition(rect.top + window.scrollY);
+  };
+
+  var editShelfName = async (shelfId, shelfName) => {
+    try {
+      await api.post(
+        "/api/v1/shelf/editName",
+        {
+          shelfId: shelfId,
+          shelfName: `${shelfName}`,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Update local state immediately
+      setShelves(prev =>
+        prev.map(s =>
+          s.id === shelfId
+            ? { ...s, shelfName }
+            : s
+        )
+      );
+    } catch (error) {
+      console.error("Error editing shelf:", error);
+    }
   };
 
   return (
@@ -87,23 +118,59 @@ const ShelvesPanel = () => {
         {shelves.map((shelf) => (
           <div
             className="shelf"
-            id={shelf}
-            key={shelf}
+            id={shelf.id}
+            key={shelf.id}
             onClick={() => {
               getSelectedShelf(shelf);
-              navigate(`/shelves/${encodeURIComponent(shelf)}`);
+              navigate(`/shelves/${encodeURIComponent(shelf.id)}`);
             }}
           >
-            {/* <Link className="shelf-link" to={`/${shelf}`}> */}
-            {shelf}
+           {editingShelfId === shelf.id ? (
+            <input
+              className="shelf-name-input"
+              value={editedName}
+              autoFocus
+              onChange={(e) => setEditedName(e.target.value)}
+              onBlur={(e) => {
+                editShelfName(shelf.id, editedName.trim());
+                setEditingShelfId(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  editShelfName(shelf.id, editedName.trim());
+                  setEditingShelfId(null);
+                }
+                if (e.key === "Escape") {
+                  setEditingShelfId(null);
+                }
+              }}
+            />
+            ) : (
+              <div className="shelf-name">{shelf.shelfName}</div>
+            )}
             {/* </Link> */}
             <HiOutlineDotsVertical
               className="shelf-dots-menu"
-              onClick={() => panelDropDownMenu(shelf)}
+              onClick={ (e) => {
+                e.stopPropagation();
+                panelDropDownMenu(e);
+                setMenuSehlf(shelf);
+              }
+              }
             />
           </div>
         ))}
-        {dropDownMenu && <SPDM menuPosition={menuPosition} />}
+        {dropDownMenu && (
+          <SPDM
+            shelf={menuShelf}
+            menuPosition={menuPosition}
+            onEditClick={() => {
+              setEditingShelfId(menuShelf.id);
+              setDropDownMenu(false);
+            }}
+          />
+        )}
       </div>
       <div className="add-shelf" onClick={createNewShelf}>
         +

@@ -1,19 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import "./SPDM.css";
 import { useGlobalContext } from "../../context";
 
-const SPDM = ({ menuPosition }) => {
+const SPDM = ({ shelf, menuPosition, onEditClick }) => {
   const topPosition = `${menuPosition + 5}px`;
-  const {
-    shelves,
-    setShelves,
-    shelfOpen,
-    setShelfOpen,
-    dropDownMenu,
-    setDropDownMenu,
-  } = useGlobalContext();
+  const { shelves, setShelves, shelfOpen, setShelfOpen, setDropDownMenu } =
+    useGlobalContext();
   const [isShelfRemoved, setIsShelfRemoved] = useState(false);
   const navigate = useNavigate();
 
@@ -22,7 +16,7 @@ const SPDM = ({ menuPosition }) => {
       await api.post(
         "/api/v1/shelf/deleteShelf",
         {
-          shelfName: `${shelfOpen}`,
+          shelfId: `${shelf.id}`,
         },
         {
           headers: {
@@ -37,11 +31,21 @@ const SPDM = ({ menuPosition }) => {
     }
   };
 
-  var editShelf = async () => {
-    try {
-      await api.post("/api/v1/shelf/edit");
-    } catch (error) {}
-  };
+  // var editShelfName = async () => {
+  //   try {
+  //     await api.post(
+  //       "/api/v1/shelf/editName",
+  //       { shelfName: `${shelfOpen}` },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //   } catch (error) {
+  //     console.error("Error editing shelf:", error);
+  //   }
+  // };
 
   const renderShelves = (shelfRemove) => {
     //method to filter out deleted shelf from shelves array
@@ -69,7 +73,7 @@ const SPDM = ({ menuPosition }) => {
   return (
     <div className="spdm-container" style={{ top: topPosition }}>
       <div className="edit-btn-container">
-        <button className="btn-spdm" onClick={editShelf}>
+        <button className="btn-spdm" onClick={onEditClick}>
           Edit Name
         </button>
       </div>
