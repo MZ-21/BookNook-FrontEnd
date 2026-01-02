@@ -6,8 +6,7 @@ import api from "../../api/axiosConfig";
 import "./searchbar.css";
 
 const SearchBar = () => {
-  const { searchedBooks } = useGlobalContext();
-  const { setSearchResults, shelves } = useGlobalContext();
+  const { searchedBooks,  setSearchResults, shelves, setShelves  } = useGlobalContext();
   const [menuSelected, setMenuSelected] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
@@ -22,25 +21,39 @@ const SearchBar = () => {
     };
   }, []);
 
-  const addBookToShelf = async (book, shelfId, shelfName) => {
-    try {
-      await api.post(
-        "/api/v1/shelf/addBook",
-        {
-          id: shelfId,
-          book: book,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+  const checkIfBookInShelf = (bookId, shelf) => {
+    return shelf.bookCollection.some(
+      (book) => String(book.bookId) === String(bookId)
+    );
+  };
+  const addBookToShelf = async (book, shelf) => {
+      try {
+        await api.post("/api/v1/shelf/addBook", 
+          {
+            id: shelf.id,
+            book: book,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        setShelves(prevShelves =>
+          prevShelves.map(s =>
+            s.id === shelf.id
+              ? {
+                  ...s,
+                  bookCollection: [...s.bookCollection, book],
+                }
+              : s
+          )
+        );
 
-      setConfirmMessage(`Added to "${shelfName}"`);
-      setShowConfirm(true);
-      setTimeout(() => setShowConfirm(false), 2000);
-    } catch (err) {
-      console.error("Error adding book to shelf:", err);
-    }
+        setConfirmMessage(`Added to "${shelf.shelfName}"`);
+        setShowConfirm(true);
+        setTimeout(() => setShowConfirm(false), 2000);
+      } catch (err) {
+        console.error("Error adding book to shelf:", err);
+      }
   };
 
   return (
@@ -67,10 +80,21 @@ const SearchBar = () => {
                     shelves.map((shelf) => (
                       <li
                         key={shelf.id}
-                        className="sb-result-item-menu-item"
-                        onClick={() =>
-                          addBookToShelf(book, shelf.id, shelf.shelfName)
-                        }
+                        className={`sb-result-item-menu-item ${
+                            checkIfBookInShelf(book.bookId, shelf) ? "disabled" : ""
+                        }`}
+                        onClick={() => {
+                          if (checkIfBookInShelf(book.bookId, shelf)) {
+                            setConfirmMessage(`Already in "${shelf.shelfName}"`);
+                            setShowConfirm(true);
+                            setTimeout(() => setShowConfirm(false), 2000);
+                            return;
+                          }
+                          else {
+                            addBookToShelf(book, shelf);
+                          }
+                          
+                        }}
                       >
                         <IoAdd />
                         {shelf.shelfName}
