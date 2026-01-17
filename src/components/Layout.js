@@ -1,16 +1,19 @@
-import { Outlet, Link } from "react-router-dom";
-import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 import "../components/Layout.css";
-import Navbar from "./navbar/Navbar";
 import { ShelvesPanel } from "./shelves-panel/ShelvesPanel";
-import { useGlobalContext } from "../context";
+import { useGlobalContext } from "../context/context";
+import Navbar from "./navbar/Navbar";
+import { useAuth } from "../context/AuthContext";
 
 const Layout = () => {
   const { leftPanelOpen } = useGlobalContext();
+  const { user } = useAuth();
+
   return (
     <>
+      <Navbar />
       <div className="body-container">
-        {leftPanelOpen && <ShelvesPanel />}
+        {user && leftPanelOpen && <ShelvesPanel />}
         <main>
           <Outlet />
           {/* renders current route selected */}
