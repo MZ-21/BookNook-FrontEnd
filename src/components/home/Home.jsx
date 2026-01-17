@@ -1,33 +1,23 @@
-import api from '../../api/axiosConfig';
-import { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
-const Home = () => {
+export default function Home() {
+  const { user } = useAuth();
 
-    
-  const [books, setBooks] = useState([]);
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>Welcome to BookNook 📚</h1>
 
-  const getBooks = async () =>{
-      
-      try{  
-        const response = await api.get("/api/v1/books");//appened to base url from axios
-        console.log(response.data);
-        setBooks(response.data);
-
-
-      } catch(err)
-      {
-        console.log(err);
-      }
-      
-  }
-  useEffect(()=> {
-    getBooks();
-  },[])
-
-
-    return (
-        <div>mi</div>
-    )
+      {user ? (
+        <p>
+          Logged in as <strong>{user.username}</strong>. Go to your{" "}
+          <Link to="/shelves">Shelves</Link> or <Link to="/community">Community</Link>.
+        </p>
+      ) : (
+        <>
+          <p>Please <Link to="/login">Login</Link> or <Link to="/signup">Signup</Link> to get started.</p>
+        </>
+      )}
+    </div>
+  );
 }
-
-export default Home;
