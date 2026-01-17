@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import "./SPDM.css";
-import { useGlobalContext } from "../../context";
+import { useGlobalContext } from "../../context/context";
 
 const SPDM = ({ shelf, menuPosition, onEditClick }) => {
   const topPosition = `${menuPosition + 5}px`;

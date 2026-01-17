@@ -1,4 +1,4 @@
-import { useGlobalContext } from "../../context";
+import { useGlobalContext } from "../../context/context";
 import { CiMenuKebab } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import { IoAdd } from "react-icons/io5";

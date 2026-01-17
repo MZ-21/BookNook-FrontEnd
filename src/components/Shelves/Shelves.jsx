@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Shelves.css";
 import { useParams } from "react-router-dom";
 import api from "../../api/axiosConfig";
-import { useGlobalContext } from "../../context";
+import { useGlobalContext } from "../../context/context";
 
 const Shelves = () => {
   const { shelfId } = useParams();

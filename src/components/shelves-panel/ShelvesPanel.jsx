@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import "./ShelvesPanel.css";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { useGlobalContext } from "../../context";
+import { useGlobalContext } from "../../context/context";
 import SPDM from "../Shelf-Panel-DM/SPDM";
 
 
@@ -41,6 +41,7 @@ const ShelvesPanel = () => {
           coverImg: "",
         },
       };
+       
       const response = await api.post("/api/v1/shelf", payload, {
         headers: {
           "Content-Type": "application/json",
@@ -69,8 +70,9 @@ const ShelvesPanel = () => {
 
   useEffect(() => {
     setLeftPanel(true);
-
+     console.log("Fetching initial shelves...did mount",shelves);
     if (!shelves || shelves.length === 0) {
+      console.log("Fetching initial shelves...", shelves);
       getInitialShelves();
     }
 
