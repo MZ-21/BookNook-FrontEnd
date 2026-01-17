@@ -1,15 +1,17 @@
-import React from "react";
-import { useContext, useState, createContext, useRef } from "react";
+import { useRef, useState } from "react";
 import "./navbar.css";
 import treeIcon from "../../images/treeI.svg";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { useGlobalContext } from "../../context";
+import { useGlobalContext } from "../../context/context";
 import api from "../../api/axiosConfig";
 import debounce from "lodash.debounce";
 import SearchBar from "../Search/SearchBar";
 import { useOnClickOutside } from "../../hooks/useOnClickOutside";
+import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const { user } = useAuth();
   const { leftPanelOpen, setLeftPanel, setSearchedBooks, searchedBooks } =
     useGlobalContext();
 
@@ -54,30 +56,48 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div className="middle-navbar-container">
-        <div className="navbar-items" onClick={leftPanelSelection}>
-          Shelves
-        </div>
-        <div className="navbar-items">Characters</div>
-        <div className="navbar-items">Community</div>
+      {user ? (
+        // Authenticated navbar
+        <div className="middle-navbar-container">
+          <div className="navbar-items" onClick={leftPanelSelection}>
+            Shelves
+          </div>
+          <div className="navbar-items">Characters</div>
+          <div className="navbar-items">Community</div>
 
-        <div ref={wrapperRef} className="search-bar-container">
-          <input
-            className="search-bar"
-            type="text"
-            onFocus={() => setOpen(true)}
-            onChange={(e) => {
-              debouncedSearch(e.target.value);
-            }}
-            placeholder="title"
-          />
-          {/* <button className="search-btn" onClick={findBook}>
-            Search
-          </button> */}
-          {open && <SearchBar />}
+          <div ref={wrapperRef} className="search-bar-container">
+            <input
+              className="search-bar"
+              type="text"
+              onFocus={() => setOpen(true)}
+              onChange={(e) => {
+                debouncedSearch(e.target.value);
+              }}
+              placeholder="title"
+            />
+            {open && <SearchBar />}
+          </div>
         </div>
-      </div>
+      ) : (
+        // Unauthenticated navbar
+        <div></div>
+      )}
       <div className="right-navbar-container">
+        {user ? ( 
+          <div>
+            <Link to="/signout">Sign out</Link>
+          </div>
+        ) : (
+          <div>
+            <div>
+               <Link to="/login">Login</Link>
+            </div>
+           <div>
+               <Link to="/signup">Sign Up</Link>
+            </div>
+          </div>
+        )}
+       
         <div className="menu-container">
           <HiOutlineDotsVertical className="dots-menu" />
         </div>
